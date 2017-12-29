@@ -8,21 +8,39 @@ function Timer(obj) {
 
   this.stopCb = obj.stopCb || function(){};
   
-  timerAttr = document.querySelector(this.elem).getAttribute('data-time');
-  
+  var t = document.querySelector(this.elem);
+      timerAttr = t.getAttribute('data-time');
   this.time = timerAttr || obj.time;
+  
+  var arrCreateElem = ['timer-d', 'timer-h', 'timer-m', 'timer-s'];
 
-  var elems = {
-   'd': document.querySelector(this.elem +' .timer-d').children[0],
-   'd_s': document.querySelector(this.elem +' .timer-d').children[1],
-   'h': document.querySelector(this.elem +' .timer-h ').children[0],
-   'h_s': document.querySelector(this.elem +' .timer-h ').children[1],
-   'm': document.querySelector(this.elem +' .timer-m ').children[0],
-   'm_s': document.querySelector(this.elem +' .timer-m ').children[1],
-   's': document.querySelector(this.elem +' .timer-s ').children[0],
-   's_s': document.querySelector(this.elem +' .timer-s ').children[1],
- };
+  for (var i = 0; i<arrCreateElem.length; i++) {
+        var div = document.createElement('div');
+        div.className = arrCreateElem[i];
+        div.innerHTML = '<span>00</span><span>минут</span>'
+        t.insertBefore(div,t.children[i]);
+    } 
+  
+   var elems = {
+       'd': document.querySelector(this.elem +' .timer-d').children[0],
+       'd_s': document.querySelector(this.elem +' .timer-d').children[1],
+       'h': document.querySelector(this.elem +' .timer-h ').children[0],
+       'h_s': document.querySelector(this.elem +' .timer-h ').children[1],
+       'm': document.querySelector(this.elem +' .timer-m ').children[0],
+       'm_s': document.querySelector(this.elem +' .timer-m ').children[1],
+       's': document.querySelector(this.elem +' .timer-s ').children[0],
+       's_s': document.querySelector(this.elem +' .timer-s ').children[1],
+     }; 
+
 	
+  this.createElem = function (){
+    
+  }
+  
+  this.getElems = function() {
+   
+    return elems;
+  }
   
 
   this.start = function () {
@@ -73,10 +91,12 @@ function Timer(obj) {
   
   this.render = function() {
 	  var data = _this.getData();
+      this.createElem();
 	  renderer(data); 
 	 
   }
    function renderer (data) {
+     
      for(k in elems){
 		elems[k].innerHTML = ((data[k]<10) ? "0" + data[k] : data[k]);
 	  } 
@@ -98,17 +118,7 @@ function Timer(obj) {
 }
 
 window.onload = function () {
-  	
-//  var elems = {
-//   'd': document.querySelector('.timer .timer-d').children[0],
-//   'd_s': document.querySelector('.timer .timer-d').children[1],
-//   'h': document.querySelector('.timer .timer-h ').children[0],
-//   'h_s': document.querySelector('.timer .timer-h ').children[1],
-//   'm': document.querySelector('.timer .timer-m ').children[0],
-//   'm_s': document.querySelector('.timer .timer-m ').children[1],
-//   's': document.querySelector('.timer .timer-s ').children[0],
-//   's_s': document.querySelector('.timer .timer-s ').children[1],
-// };
+
 	
 	
   var timer = new Timer({
@@ -120,6 +130,7 @@ window.onload = function () {
 	}  
 	
   });
+  
    var timer1 = new Timer({
 	elem: ".timer1",  
     time: 8,
