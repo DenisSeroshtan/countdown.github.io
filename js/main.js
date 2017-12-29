@@ -2,13 +2,28 @@ function Timer(obj) {
   var
       _this = this,
       timer = 0,
-	  renderer = obj.render || function (data){};
+      timerAttr;
   
   this.elem = obj.elem;
-	
-//  this.time = obj.time;
 
   this.stopCb = obj.stopCb || function(){};
+  
+  timerAttr = document.querySelector(this.elem).getAttribute('data-time');
+  
+  this.time = timerAttr || obj.time;
+
+  var elems = {
+   'd': document.querySelector(this.elem +' .timer-d').children[0],
+   'd_s': document.querySelector(this.elem +' .timer-d').children[1],
+   'h': document.querySelector(this.elem +' .timer-h ').children[0],
+   'h_s': document.querySelector(this.elem +' .timer-h ').children[1],
+   'm': document.querySelector(this.elem +' .timer-m ').children[0],
+   'm_s': document.querySelector(this.elem +' .timer-m ').children[1],
+   's': document.querySelector(this.elem +' .timer-s ').children[0],
+   's_s': document.querySelector(this.elem +' .timer-s ').children[1],
+ };
+	
+  
 
   this.start = function () {
       timer = setInterval(function () {
@@ -61,6 +76,11 @@ function Timer(obj) {
 	  renderer(data); 
 	 
   }
+   function renderer (data) {
+     for(k in elems){
+		elems[k].innerHTML = ((data[k]<10) ? "0" + data[k] : data[k]);
+	  } 
+   }
    function endings(t, variants) {
         var t0 = t % 10;
 
@@ -79,34 +99,39 @@ function Timer(obj) {
 
 window.onload = function () {
   	
-  var elems = {
-   'd': document.querySelector('.timer .timer-d').children[0],
-   'd_s': document.querySelector('.timer .timer-d').children[1],
-   'h': document.querySelector('.timer .timer-h ').children[0],
-   'h_s': document.querySelector('.timer .timer-h ').children[1],
-   'm': document.querySelector('.timer .timer-m ').children[0],
-   'm_s': document.querySelector('.timer .timer-m ').children[1],
-   's': document.querySelector('.timer .timer-s ').children[0],
-   's_s': document.querySelector('.timer .timer-s ').children[1],
- };
+//  var elems = {
+//   'd': document.querySelector('.timer .timer-d').children[0],
+//   'd_s': document.querySelector('.timer .timer-d').children[1],
+//   'h': document.querySelector('.timer .timer-h ').children[0],
+//   'h_s': document.querySelector('.timer .timer-h ').children[1],
+//   'm': document.querySelector('.timer .timer-m ').children[0],
+//   'm_s': document.querySelector('.timer .timer-m ').children[1],
+//   's': document.querySelector('.timer .timer-s ').children[0],
+//   's_s': document.querySelector('.timer .timer-s ').children[1],
+// };
 	
 	
   var timer = new Timer({
 	elem: ".timer",  
     time: 10,
-	render: function(data) {
-	  for(k in elems){
-		elems[k].innerHTML = ((data[k]<10) ? "0" + data[k] : data[k]);
-	  }
-	},  
 	stopCb: function(){
 		var img = document.querySelector('.img');
 		img.style.display = "none";
 	}  
 	
   });
-//  timer.getData()
+   var timer1 = new Timer({
+	elem: ".timer1",  
+    time: 8,
+	stopCb: function(){
+		var img = document.querySelector('.img');
+		img.style.display = "none";
+	}  
+	
+  });
+ 
   timer.render();     
+  timer1.render();     
 
 	
   var btn = document.querySelector('.btn');
