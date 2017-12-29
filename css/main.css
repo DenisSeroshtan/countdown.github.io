@@ -1,0 +1,28 @@
+html, body {
+	width: 100%;
+	height: 100%;
+}
+
+.wrapper {
+	min-height: 100%;
+	overflow: hidden;
+	position: relative;
+	text-align: center;
+	padding: 100px;
+}
+.timer {
+	min-width: 100px;
+	padding: 20px;
+	border: 1px dashed;
+	background: #F6f6f6;
+}
+.timer__span {
+	display: inline-block;
+	margin-right: 10px
+}
+.timer__span span {
+	display: block;
+	border: 1px solid;
+	min-height: 10px;
+	min-width: 10px;
+}
