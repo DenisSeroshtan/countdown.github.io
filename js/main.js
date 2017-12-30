@@ -7,35 +7,35 @@ function Timer(obj) {
   this.elem = obj.elem;
 
   this.stopCb = obj.stopCb || function () {};
-
-  var t = document.querySelector(this.elem);
   
-  timerAttr = t.getAttribute('data-time');
+  this.arrCreateElem = ['timer-d', 'timer-h', 'timer-m', 'timer-s'];
+  
+  this.t = document.querySelector(this.elem);
+  
+  timerAttr = this.t.getAttribute('data-time');
   this.time = timerAttr || obj.time;
 
 
   this.createElem = function () {
-    var arrCreateElem = ['timer-d', 'timer-h', 'timer-m', 'timer-s'];
-
-    for (var i = 0; i < arrCreateElem.length; i++) {
+   
+    for (var i = 0; i < this.arrCreateElem.length; i++) {
       var div = document.createElement('div');
-      div.className = arrCreateElem[i];
-      div.innerHTML = '<span>00</span><span>минут</span>'
-      t.insertBefore(div, t.children[i]);
+      div.className = this.arrCreateElem[i];
+      div.innerHTML = '<span>00</span><span>минут</span>';
+      this.t.insertBefore(div, this.t.children[i]);
     }
 
   }
   this.createElem();
-
   var elems = {
-    'd': document.querySelector(this.elem + ' .timer-d').children[0],
-    'd_s': document.querySelector(this.elem + ' .timer-d').children[1],
-    'h': document.querySelector(this.elem + ' .timer-h ').children[0],
-    'h_s': document.querySelector(this.elem + ' .timer-h ').children[1],
-    'm': document.querySelector(this.elem + ' .timer-m ').children[0],
-    'm_s': document.querySelector(this.elem + ' .timer-m ').children[1],
-    's': document.querySelector(this.elem + ' .timer-s ').children[0],
-    's_s': document.querySelector(this.elem + ' .timer-s ').children[1],
+    'd': document.querySelector(this.elem + ' .' + this.arrCreateElem[0]).children[0],
+    'd_s': document.querySelector(this.elem + ' .' + this.arrCreateElem[0]).children[1],
+    'h': document.querySelector(this.elem + ' .' + this.arrCreateElem[1]).children[0],
+    'h_s': document.querySelector(this.elem + ' .' + this.arrCreateElem[1]).children[1],
+    'm': document.querySelector(this.elem + ' .' + this.arrCreateElem[2]).children[0],
+    'm_s': document.querySelector(this.elem + ' .' + this.arrCreateElem[2]).children[1],
+    's': document.querySelector(this.elem + ' .' + this.arrCreateElem[3]).children[0],
+    's_s': document.querySelector(this.elem + ' .' + this.arrCreateElem[3]).children[1]
   };
 
   this.start = function () {
@@ -52,7 +52,6 @@ function Timer(obj) {
 
   }
   this.tick = function () {
-
     if (_this.time == 0) {
       _this.stop();
       return;
@@ -86,14 +85,11 @@ function Timer(obj) {
 
   this.render = function () {
     var data = _this.getData();
-
     renderer(data);
 
   }
 
   function renderer(data) {
-
-
     for (k in elems) {
       elems[k].innerHTML = ((data[k] < 10) ? "0" + data[k] : data[k]);
     }
@@ -123,15 +119,14 @@ window.onload = function () {
     elem: ".timer",
     time: 10,
     stopCb: function () {
-      var img = document.querySelector('.img');
-      img.style.display = "none";
+      this.t.remove();
     }
 
   });
 
   var timer1 = new Timer({
     elem: ".timer1",
-    time: 8,
+    time: 500,
     stopCb: function () {
       var img = document.querySelector('.img');
       img.style.display = "none";
@@ -140,7 +135,7 @@ window.onload = function () {
   });
 
   timer.render();
-  timer1.render();
+  timer1.start();
 
 
   var btn = document.querySelector('.btn');
