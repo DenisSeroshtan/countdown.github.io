@@ -1,32 +1,66 @@
+window.onload = function () {
+
+  var timer = new Timer();
+
+  var timer1 = new Timer({
+    elem: ".timer1",
+    stopCb : function(){
+      this.t.remove();
+    }
+  });
+  
+  var timer2 = new Timer({
+    elem: ".timer2",
+    autoStart: false,    
+    time: 172800
+  });
+  
+  var btn = document.querySelector('.btn__start');
+  btn.addEventListener('click', function () {
+    timer2.start();
+
+  });
+  
+  var btn = document.querySelector('.btn__stop');
+  btn.addEventListener('click', function () {
+    timer2.stop();
+  })
+}
+// конструктор
 function Timer(obj) {
+  var obj = obj || {};
   var
     _this = this,
     timer = 0,
     timerAttr;
-
-  this.elem = obj.elem;
-
+  
+  var autoStart = (obj.autoStart === undefined) ? true : obj.autoStart;
+  var autoRender = (obj.autoRender === undefined) ? true : obj.autoRender;
+  
+  this.elem = obj.elem || ".timer";
+  // колбэк при стопе таймера
   this.stopCb = obj.stopCb || function () {};
-  
+  // классы создаваемых элементов
   this.arrCreateElem = ['timer-d', 'timer-h', 'timer-m', 'timer-s'];
-  
+
   this.t = document.querySelector(this.elem);
-  
+  //получаем значение времени в секундах из дата аттрибута
   timerAttr = this.t.getAttribute('data-time');
   this.time = timerAttr || obj.time;
 
-
+  // создаем элементы для данных
   this.createElem = function () {
-   
+
     for (var i = 0; i < this.arrCreateElem.length; i++) {
       var div = document.createElement('div');
       div.className = this.arrCreateElem[i];
-      div.innerHTML = '<span>00</span><span>минут</span>';
+      div.innerHTML = '<span></span><span></span>';
       this.t.insertBefore(div, this.t.children[i]);
     }
 
   }
   this.createElem();
+  // после создания элементов получаем к ним доступ
   var elems = {
     'd': document.querySelector(this.elem + ' .' + this.arrCreateElem[0]).children[0],
     'd_s': document.querySelector(this.elem + ' .' + this.arrCreateElem[0]).children[1],
@@ -42,12 +76,16 @@ function Timer(obj) {
     timer = setInterval(function () {
       _this.tick();
     }, 1000);
-
   }
+  
+  if (autoStart){
+    this.start();
+  }
+  
   this.stop = function () {
     if (timer) {
       clearInterval(timer);
-      _this.stopCb()
+      _this.stopCb() //callback
     }
 
   }
@@ -59,6 +97,7 @@ function Timer(obj) {
     _this.time--;
     _this.render();
   }
+  // получаем данные со временем и окончаниями
   this.getData = function () {
     var data = {};
 
@@ -86,15 +125,18 @@ function Timer(obj) {
   this.render = function () {
     var data = _this.getData();
     renderer(data);
-
+  }
+  if (autoRender){
+    this.render();
   }
 
   function renderer(data) {
-    for (k in elems) {
+  // рендерим дату в DOM  
+    for (var k in elems) {
       elems[k].innerHTML = ((data[k] < 10) ? "0" + data[k] : data[k]);
     }
   }
-
+  // получаем варианты окончаний
   function endings(t, variants) {
     var t0 = t % 10;
 
@@ -108,39 +150,4 @@ function Timer(obj) {
       return variants[0];
     }
   }
-
-}
-
-window.onload = function () {
-
-
-
-  var timer = new Timer({
-    elem: ".timer",
-    time: 10,
-    stopCb: function () {
-      this.t.remove();
-    }
-
-  });
-
-  var timer1 = new Timer({
-    elem: ".timer1",
-    time: 500,
-    stopCb: function () {
-      var img = document.querySelector('.img');
-      img.style.display = "none";
-    }
-
-  });
-
-  timer.render();
-  timer1.start();
-
-
-  var btn = document.querySelector('.btn');
-  btn.addEventListener('click', function () {
-    timer.start();
-
-  })
 }
