@@ -9,6 +9,7 @@ body {
 }
 
 .wrapper {
+  min-width: 960px;
   min-height: 100%;
   background: #dfdfe0;
   overflow: hidden;
@@ -23,13 +24,19 @@ body {
   color: #bab9b9
 }
 
-.bl__timer {
+.timer__wrap {
   margin: 0 auto;
   max-width: 500px;
+  min-height: 180px;
   padding: 20px;
   border: 1px dashed;
   background: #746e6e;
   color: #fff;
+}
+
+.timer__title {
+  font-size: 18px;
+  color: #f6f6f6;
 }
 
 .bl__timer > div {

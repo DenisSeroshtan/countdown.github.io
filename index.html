@@ -5,8 +5,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Countdown</title>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=960">
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/main.css">
 </head>
@@ -14,20 +14,31 @@
 <body>
   <div class="wrapper">
     <h1 class="title">Примеры таймеров</h1>
-    <div class="bl__timer timer" data-time="2018-1-14"></div>
 
-    <div class="bl__timer timer1" data-time="2018-1-12"></div>
+    <div class="timer__wrap">
+      <div class="timer__title">До 2019 года осталось:</div>
+      <div class="bl__timer timer" data-time="2019-1-1"></div>
+    </div>
 
-    <div class="bl__timer timer2">
-      <div class="bl__btn">
-        <button type="button" class="btn btn__start">start</button>
-        <button type="button" class="btn btn__stop">stop</button>
+    <div class="timer__wrap">
+      <div class="timer__title">До конца отсчета осталось:</div>
+      <div class="bl__timer timer1" data-loop="10"></div>
+    </div>
+
+    <div class="timer__wrap">
+      <div class="timer__title">Для запуска таймера нажмите "start"</div>
+      <div class="bl__timer timer2">
+        <div class="bl__btn">
+          <button type="button" class="btn btn__start">start</button>
+          <button type="button" class="btn btn__stop">stop</button>
+        </div>
       </div>
     </div>
 
   </div>
 
   <script src="js/countdown.js"></script>
+  <script src="js/main.js"></script>
 </body>
 
 </html>

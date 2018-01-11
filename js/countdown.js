@@ -1,39 +1,12 @@
-window.onload = function () {
-
-  var timer = new Timer();
-
-  var timer1 = new Timer({
-    elem: ".timer1",
-    stopCb: function () {
-      this.t.remove();
-    }
-  });
-
-  var timer2 = new Timer({
-    elem: ".timer2",
-    autoStart: false,
-    time: "2019-1-01"
-  });
-
-
-  var btn = document.querySelector('.btn__start');
-  btn.addEventListener('click', function () {
-    timer2.start();
-
-  });
-
-  var btn = document.querySelector('.btn__stop');
-  btn.addEventListener('click', function () {
-    timer2.stop();
-  })
-}
 // конструктор
 function Timer(obj) {
   var obj = obj || {};
   var
     _this = this,
     timer = 0,
-    timerAttr;
+    timerAttr,
+    timerLoop,
+    endingTime = 0;
 
   var autoStart = (obj.autoStart === undefined) ? true : obj.autoStart;
   var autoRender = (obj.autoRender === undefined) ? true : obj.autoRender;
@@ -45,9 +18,12 @@ function Timer(obj) {
   this.arrCreateElem = ['timer-d', 'timer-h', 'timer-m', 'timer-s'];
 
   this.t = document.querySelector(this.elem);
-  //получаем значение времени в секундах из дата аттрибута
+  // получаем дату до конца отсчета таймера
   timerAttr = this.t.getAttribute('data-time');
   this.time = timerAttr || obj.time;
+  //получаем значение в секундах для цикличного таймера 
+  timerLoop = this.t.getAttribute("data-loop")
+  var loopSeconds = timerLoop || obj.loop;
 
   // создаем элементы для данных
   this.createElem = function () {
@@ -72,29 +48,30 @@ function Timer(obj) {
     's': document.querySelector(this.elem + ' .' + this.arrCreateElem[3]).children[0],
     's_s': document.querySelector(this.elem + ' .' + this.arrCreateElem[3]).children[1]
   };
-
+  // парсим текущее время и время до конца отсчета
   this.parseTime = function () {
-    var currentDate = new Date();
-    var parseFuture = Date.parse(_this.time);
-
-    var parseCurrent = Date.parse(currentDate);
-
-    var secondsEnd = (parseFuture - parseCurrent) / 1000;
+    var
+      currentDate = new Date(),
+      parseFuture = Date.parse(_this.time),
+      parseCurrent = Date.parse(currentDate),
+      secondsEnd = (parseFuture - parseCurrent) / 1000;
 
     if (secondsEnd <= 0) {
       return 0
     }
     return secondsEnd;
   }
-
-  var endingTime = this.parseTime();
+  // определяем конечное время в секундах
+  endingTime = (this.time) ? this.parseTime() : loopSeconds;
 
   this.start = function () {
-    timer = setInterval(function () {
-      _this.tick();
-    }, 1000);
+    if (!timer) {
+      timer = setInterval(function () {
+        _this.tick();
+      }, 1000);
+    }
   }
-
+  // по умолчанию автостарт таймера
   if (autoStart) {
     this.start();
   }
@@ -102,9 +79,9 @@ function Timer(obj) {
   this.stop = function () {
     if (timer) {
       clearInterval(timer);
+      timer = 0;
       _this.stopCb() //callback
     }
-
   }
   this.tick = function () {
     if (endingTime == 0) {
@@ -112,6 +89,7 @@ function Timer(obj) {
       return;
     }
     endingTime--;
+
     _this.render();
   }
   // получаем данные со временем и окончаниями
@@ -120,20 +98,20 @@ function Timer(obj) {
 
     var d_free = endingTime % (3600 * 24);
     var d = (endingTime - d_free) / (3600 * 24);
-    data.d = d;
+    data.d = d; // остаток дней
     data.d_s = endings(d, ['дней', 'день', 'дня'])
 
     var h_free = d_free % 3600;
     var h = (d_free - h_free) / 3600;
-    data.h = h;
+    data.h = h; // остаток часов
     data.h_s = endings(h, ['часов', 'час', 'часа']);
 
     var m_free = h_free % 60;
     var m = (h_free - m_free) / 60;
-    data.m = m;
+    data.m = m; // остаток минут
     data.m_s = endings(m, ['минут', 'минута', 'минуты']);
 
-    data.s = m_free;
+    data.s = m_free; // остаток секунд
     data.s_s = endings(m_free, ['секунд', 'секунда', 'секунды']);
 
     return data;
@@ -150,13 +128,13 @@ function Timer(obj) {
   function renderer(data) {
     // рендерим дату в DOM  
     for (var k in elems) {
+      if (elems[k] === null) continue
       elems[k].innerHTML = ((data[k] < 10) ? "0" + data[k] : data[k]);
     }
   }
   // получаем варианты окончаний
   function endings(t, variants) {
     var t0 = t % 10;
-
     if (t > 4 && t < 21) {
       return variants[0];
     } else if (t0 == 1) {
