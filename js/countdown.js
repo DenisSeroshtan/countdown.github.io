@@ -4,23 +4,24 @@ window.onload = function () {
 
   var timer1 = new Timer({
     elem: ".timer1",
-    stopCb : function(){
+    stopCb: function () {
       this.t.remove();
     }
   });
-  
+
   var timer2 = new Timer({
     elem: ".timer2",
-    autoStart: false,    
-    time: 172800
+    autoStart: false,
+    time: "2019-1-01"
   });
-  
+
+
   var btn = document.querySelector('.btn__start');
   btn.addEventListener('click', function () {
     timer2.start();
 
   });
-  
+
   var btn = document.querySelector('.btn__stop');
   btn.addEventListener('click', function () {
     timer2.stop();
@@ -33,10 +34,10 @@ function Timer(obj) {
     _this = this,
     timer = 0,
     timerAttr;
-  
+
   var autoStart = (obj.autoStart === undefined) ? true : obj.autoStart;
   var autoRender = (obj.autoRender === undefined) ? true : obj.autoRender;
-  
+
   this.elem = obj.elem || ".timer";
   // колбэк при стопе таймера
   this.stopCb = obj.stopCb || function () {};
@@ -72,16 +73,32 @@ function Timer(obj) {
     's_s': document.querySelector(this.elem + ' .' + this.arrCreateElem[3]).children[1]
   };
 
+  this.parseTime = function () {
+    var currentDate = new Date();
+    var parseFuture = Date.parse(_this.time);
+
+    var parseCurrent = Date.parse(currentDate);
+
+    var secondsEnd = (parseFuture - parseCurrent) / 1000;
+
+    if (secondsEnd <= 0) {
+      return 0
+    }
+    return secondsEnd;
+  }
+
+  var endingTime = this.parseTime();
+
   this.start = function () {
     timer = setInterval(function () {
       _this.tick();
     }, 1000);
   }
-  
-  if (autoStart){
+
+  if (autoStart) {
     this.start();
   }
-  
+
   this.stop = function () {
     if (timer) {
       clearInterval(timer);
@@ -90,19 +107,19 @@ function Timer(obj) {
 
   }
   this.tick = function () {
-    if (_this.time == 0) {
+    if (endingTime == 0) {
       _this.stop();
       return;
     }
-    _this.time--;
+    endingTime--;
     _this.render();
   }
   // получаем данные со временем и окончаниями
   this.getData = function () {
     var data = {};
 
-    var d_free = _this.time % (3600 * 24);
-    var d = (_this.time - d_free) / (3600 * 24);
+    var d_free = endingTime % (3600 * 24);
+    var d = (endingTime - d_free) / (3600 * 24);
     data.d = d;
     data.d_s = endings(d, ['дней', 'день', 'дня'])
 
@@ -126,12 +143,12 @@ function Timer(obj) {
     var data = _this.getData();
     renderer(data);
   }
-  if (autoRender){
+  if (autoRender) {
     this.render();
   }
 
   function renderer(data) {
-  // рендерим дату в DOM  
+    // рендерим дату в DOM  
     for (var k in elems) {
       elems[k].innerHTML = ((data[k] < 10) ? "0" + data[k] : data[k]);
     }
