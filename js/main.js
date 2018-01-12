@@ -12,7 +12,8 @@ window.onload = function () {
   var timer2 = new Timer({
     elem: ".timer2",
     autoStart: false,
-    loop: "3600"
+    loop: "3600",
+    formatData: 'h-m-s'
   });
 
 

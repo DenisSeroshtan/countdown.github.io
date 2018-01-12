@@ -6,16 +6,23 @@ function Timer(obj) {
     timer = 0,
     timerAttr,
     timerLoop,
-    endingTime = 0;
-
+    endingTime = 0,
+    formatData = obj.formatData || 'd-h-m-s';
+  
+  var arrCreateElem = formatData.split("-"); // ['d', 'h', 'm', 's']
+  var arrText = []; //["d_s", 'h_s', 'm_s', 's_s']
+  for (var z = 0; z < arrCreateElem.length; z++) {
+    var newElem = arrCreateElem[z] + '_s';
+    arrText.push(newElem);
+  }
+ 
+  
   var autoStart = (obj.autoStart === undefined) ? true : obj.autoStart;
   var autoRender = (obj.autoRender === undefined) ? true : obj.autoRender;
 
   this.elem = obj.elem || ".timer";
   // колбэк при стопе таймера
   this.stopCb = obj.stopCb || function () {};
-  // классы создаваемых элементов
-  this.arrCreateElem = ['timer-d', 'timer-h', 'timer-m', 'timer-s'];
 
   this.t = document.querySelector(this.elem);
   // получаем дату до конца отсчета таймера
@@ -28,9 +35,9 @@ function Timer(obj) {
   // создаем элементы для данных
   this.createElem = function () {
 
-    for (var i = 0; i < this.arrCreateElem.length; i++) {
+    for (var i = 0; i < arrCreateElem.length; i++) {
       var div = document.createElement('div');
-      div.className = this.arrCreateElem[i];
+      div.className = arrCreateElem[i]; 
       div.innerHTML = '<span></span><span></span>';
       this.t.insertBefore(div, this.t.children[i]);
     }
@@ -38,16 +45,13 @@ function Timer(obj) {
   }
   this.createElem();
   // после создания элементов получаем к ним доступ
-  var elems = {
-    'd': document.querySelector(this.elem + ' .' + this.arrCreateElem[0]).children[0],
-    'd_s': document.querySelector(this.elem + ' .' + this.arrCreateElem[0]).children[1],
-    'h': document.querySelector(this.elem + ' .' + this.arrCreateElem[1]).children[0],
-    'h_s': document.querySelector(this.elem + ' .' + this.arrCreateElem[1]).children[1],
-    'm': document.querySelector(this.elem + ' .' + this.arrCreateElem[2]).children[0],
-    'm_s': document.querySelector(this.elem + ' .' + this.arrCreateElem[2]).children[1],
-    's': document.querySelector(this.elem + ' .' + this.arrCreateElem[3]).children[0],
-    's_s': document.querySelector(this.elem + ' .' + this.arrCreateElem[3]).children[1]
-  };
+  var elems = {};
+  for (var j = 0; j < arrCreateElem.length; j++) {
+    
+    elems[arrCreateElem[j]] = document.querySelector(this.elem + ' .' + arrCreateElem[j]).children[0];
+    elems[arrText[j]] = document.querySelector(this.elem + ' .' + arrCreateElem[j]).children[1];
+  }
+
   // парсим текущее время и время до конца отсчета
   this.parseTime = function () {
     var
@@ -93,26 +97,35 @@ function Timer(obj) {
     _this.render();
   }
   // получаем данные со временем и окончаниями
+
   this.getData = function () {
     var data = {};
 
     var d_free = endingTime % (3600 * 24);
     var d = (endingTime - d_free) / (3600 * 24);
-    data.d = d; // остаток дней
-    data.d_s = endings(d, ['дней', 'день', 'дня'])
-
+    if(arrCreateElem.indexOf('d') >= 0){    
+      data.d = d; // остаток дней
+      data.d_s = endings(d, ['дней', 'день', 'дня'])
+    }
+    
     var h_free = d_free % 3600;
     var h = (d_free - h_free) / 3600;
-    data.h = h; // остаток часов
-    data.h_s = endings(h, ['часов', 'час', 'часа']);
-
+    if (arrCreateElem.indexOf('h') >= 0) {
+      data.h = h; // остаток часов
+      data.h_s = endings(h, ['часов', 'час', 'часа']);
+    }
+    
     var m_free = h_free % 60;
     var m = (h_free - m_free) / 60;
-    data.m = m; // остаток минут
-    data.m_s = endings(m, ['минут', 'минута', 'минуты']);
-
-    data.s = m_free; // остаток секунд
-    data.s_s = endings(m_free, ['секунд', 'секунда', 'секунды']);
+    if (arrCreateElem.indexOf('m') >= 0) {
+      data.m = m; // остаток минут
+      data.m_s = endings(m, ['минут', 'минута', 'минуты']);
+      
+    }
+    if(arrCreateElem.indexOf('s') >= 0) { 
+      data.s = m_free; // остаток секунд
+      data.s_s = endings(m_free, ['секунд', 'секунда', 'секунды']);
+    }
 
     return data;
   }
@@ -126,9 +139,8 @@ function Timer(obj) {
   }
 
   function renderer(data) {
-    // рендерим дату в DOM  
+    // рендерим полученную дату в DOM  
     for (var k in elems) {
-      if (elems[k] === null) continue
       elems[k].innerHTML = ((data[k] < 10) ? "0" + data[k] : data[k]);
     }
   }
