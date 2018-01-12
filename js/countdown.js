@@ -10,7 +10,9 @@ function Timer(obj) {
     formatData = obj.formatData || 'd-h-m-s';
   
   var arrCreateElem = formatData.split("-"); // ['d', 'h', 'm', 's']
+  
   var arrText = []; //["d_s", 'h_s', 'm_s', 's_s']
+  
   for (var z = 0; z < arrCreateElem.length; z++) {
     var newElem = arrCreateElem[z] + '_s';
     arrText.push(newElem);
@@ -22,7 +24,9 @@ function Timer(obj) {
 
   this.elem = obj.elem || ".timer";
   // колбэк при стопе таймера
-  this.stopCb = obj.stopCb || function () {};
+  this.stopCb = obj.stopCb || function() {};
+
+  this.t = document.querySelectorAll(this.elem);
 
   this.t = document.querySelector(this.elem);
   // получаем дату до конца отсчета таймера
@@ -39,7 +43,7 @@ function Timer(obj) {
       var div = document.createElement('div');
       div.className = arrCreateElem[i]; 
       div.innerHTML = '<span></span><span></span>';
-      this.t.insertBefore(div, this.t.children[i]);
+      this.t.appendChild(div);
     }
 
   }
