@@ -17,14 +17,14 @@
   пример data-loop="3600"
   
 ### callback по окончанию времени
-    ```js
-    var timer = new Timer({
-      stopCb: function(){
-        this.t.remove() // удаление таймера
-      }
-    })
-    ```
-### api    
+  ```js
+  var timer = new Timer({
+    stopCb: function(){
+      this.t.remove() // удаление таймера
+    }
+  })
+  ```
+### API    
 
   * elem - string (селектор для инициализации таймер) // default - ".timer"
   * time - string (время до конца отсчета "год-месяц-число часы:минуты:секунды") // приоритет над loop 
@@ -54,7 +54,7 @@ OR
     var countdown = new Timer({
       elem : "#countdown",
       loop : "7200",
-      formatData : "h-m-s", // default
+      formatData : "h-m-s", // часы-минуты-секунды
       stopCb : function() {
         this.t.innerHTML = "time over"      
       }

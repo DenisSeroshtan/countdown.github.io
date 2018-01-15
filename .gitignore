@@ -3,4 +3,4 @@ bower_components
 .idea
 build
 .eslintrc
-/package-lock.json
+.gitignore
